@@ -10,17 +10,21 @@ class App:
         master.title("PySweeper")
         root.configure(bg=DARK_GREY)
 
+        #Setting default window size to Easy Difficult Size
+        #This will also be the default difficulty at startup
+        self.set_win_size(1)
+    
         #creating a blank image to allow pixel sizing on buttons
         self.blank_img = PhotoImage()
 
 
         #Draw status bar
         self.frm_status = Frame(master=master,
-            height=60,
-            width=250,
+            height=STATUS_HEIGHT,
+            width=(self.win_width-WIN_PADDING) * 2.5,
             bg=DARK_GREY,
             relief='sunken',
-            borderwidth=5
+            borderwidth=8
         )
         self.btn_reset = Button(master=self.frm_status,
             image=self.blank_img,
@@ -45,16 +49,16 @@ class App:
         self.frm_status.grid_columnconfigure(2, weight=1)
         self.frm_status.grid_rowconfigure(0, weight=1)
         self.frm_status.grid_rowconfigure(2, weight=1)
-        self.ent_mine_count.grid(column=0, row=1, padx=5)
-        self.btn_reset.grid(column=1, row=1)
-        self.ent_score.grid(column=2, row=1, padx=5)
+        self.ent_mine_count.grid(column=0, row=1, padx=5, pady=4)
+        self.btn_reset.grid(column=1, row=1, pady=4)
+        self.ent_score.grid(column=2, row=1, padx=5, pady=4)
 
 
         #Drawing Frame around button grid
         self.frm_grid = Frame(master=master, 
             bg=DARK_GREY,
             relief='sunken',
-            borderwidth=5
+            borderwidth=8,
         )
         self.frm_grid.pack()
         self.frm_grid.pack_propagate(0)
@@ -82,7 +86,16 @@ class App:
                     pady=2
                 )
 
-#Dynamic Window Size based on size of grid
+#Dynamic Window Size based on difficulty
+    def set_win_size(self, difficulty):
+        #Custom = 0, Easy = 1, Intermediate = 2, Expert = 3
+        if difficulty == 1:
+            self.win_width = (EASY_ROWS * TILE_SIZE) + WIN_PADDING
+            self.win_height = (EASY_ROWS * TILE_SIZE) + WIN_PADDING + STATUS_HEIGHT
+            root.minsize(width=self.win_width, height=self.win_height)
+            root.resizable(False,False)
+
+
 
 
 
@@ -101,7 +114,5 @@ class App:
 
 if __name__ == "__main__":
     root = Tk()
-    #Using this window size until we have function for window size
-    root.geometry('300x400')
     mainApp = App(root)
     root.mainloop()

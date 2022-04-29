@@ -1,6 +1,7 @@
-#Tile Sizes
+#Element sizing
 TILE_SIZE = 10
-
+WIN_PADDING = 6
+STATUS_HEIGHT = 60
 
 #Difficulty Levels
 EASY_ROWS = 9
