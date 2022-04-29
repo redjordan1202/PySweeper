@@ -1,8 +1,7 @@
-#Variable file
-import pygame
+#Tile Sizes
+TILE_SIZE = 40
 
-#Tile Size Variable
 
-#Number of Mines per difficult level
-
-#Grid size per difficulty level
+#Difficulty Levels
+EASY_ROWS = 9
+EASY_COLS = 9
