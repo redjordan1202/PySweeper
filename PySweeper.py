@@ -1,5 +1,4 @@
 #PySweeper -  tkinter based Minesweeper Clone
-from functools import partial
 from tkinter import *
 from vars import *
 
@@ -11,18 +10,14 @@ class App:
         master.title("PySweeper")
         root.configure(bg=DARK_GREY)
 
-        #Setting default window size to Easy Difficult Size
-        #This will also be the default difficulty at startup
+#Set window to Easy size. Which is default
         self.set_win_size(1)
-    
-        #creating a blank image to allow pixel sizing on buttons
+#blank image to allow pixel sizing on buttons
         self.blank_img = PhotoImage()
-
-
-        #grid buttons
+#list of grid buttons
         self.grid_btns = []
 
-        #Draw status bar
+#define Status Bar widgets
         self.frm_status = Frame(master=master,
             height=STATUS_HEIGHT,
             width=(self.win_width-WIN_PADDING) * 2.5,
@@ -47,9 +42,17 @@ class App:
             disabledbackground='black'
         )
 
+#Grid Frame
+        self.frm_grid = Frame(master=master, 
+            bg=DARK_GREY,
+            relief='sunken',
+            borderwidth=8,
+        )
+
+
+#Status Bar Drawing
         self.frm_status.pack(pady=10)
         self.frm_status.grid_propagate(0)
-        
         self.frm_status.grid_columnconfigure(0, weight=1)
         self.frm_status.grid_columnconfigure(2, weight=1)
         self.frm_status.grid_rowconfigure(0, weight=1)
@@ -58,17 +61,9 @@ class App:
         self.btn_reset.grid(column=1, row=1, pady=4)
         self.ent_score.grid(column=2, row=1, padx=5, pady=4)
 
-
-        #Drawing Frame around button grid
-        self.frm_grid = Frame(master=master, 
-            bg=DARK_GREY,
-            relief='sunken',
-            borderwidth=8,
-        )
+# Grid Section Drawing
         self.frm_grid.pack()
-        self.frm_grid.pack_propagate(0)
-
-        
+        self.frm_grid.pack_propagate(0)        
         self.draw_grid()
         
 
@@ -131,9 +126,6 @@ class App:
 
 
 
-
-
-#Remove Square on click
 
 #Place Mines
 
