@@ -1,4 +1,5 @@
 #PySweeper -  tkinter based Minesweeper Clone
+from functools import partial
 from tkinter import *
 from vars import *
 
@@ -18,6 +19,9 @@ class App:
         self.blank_img = PhotoImage()
 
 
+        #grid buttons
+        self.grid_btns = []
+
         #Draw status bar
         self.frm_status = Frame(master=master,
             height=STATUS_HEIGHT,
@@ -30,7 +34,7 @@ class App:
             image=self.blank_img,
             width=25,
             height=25,
-            bg='yellow'
+            bg='yellow',
         )
         self.ent_mine_count = Entry(master=self.frm_status,
             state='disabled',
@@ -45,6 +49,7 @@ class App:
 
         self.frm_status.pack(pady=10)
         self.frm_status.grid_propagate(0)
+        
         self.frm_status.grid_columnconfigure(0, weight=1)
         self.frm_status.grid_columnconfigure(2, weight=1)
         self.frm_status.grid_rowconfigure(0, weight=1)
@@ -71,6 +76,7 @@ class App:
     def draw_grid(self):
         #Using easy sized 9x9 grid for now
         for y in range(0, EASY_ROWS, 1):
+            rows = []
             for x in range(0, EASY_COLS, 1):
                 self.button = Button(master=self.frm_grid, 
                     bg=DARK_GREY,
@@ -79,12 +85,20 @@ class App:
                     image=self.blank_img,
                     relief='raised',
                     borderwidth=5,
+                    command=lambda row=y, col=x: self.check_btn(row,col),
+                    compound='top'
                 )
+                rows.append(self.button)
                 self.button.grid(column=x, 
                     row=y,
                     padx=2,
                     pady=2
                 )
+                self.frm_grid.columnconfigure(x,minsize=TILE_SIZE)
+            self.frm_grid.rowconfigure(y,minsize=TILE_SIZE)
+            self.grid_btns.append(rows)
+
+
 
 #Dynamic Window Size based on difficulty
     def set_win_size(self, difficulty):
@@ -94,6 +108,26 @@ class App:
             self.win_height = (EASY_ROWS * TILE_SIZE) + WIN_PADDING + STATUS_HEIGHT
             root.minsize(width=self.win_width, height=self.win_height)
             root.resizable(False,False)
+
+#function to check if button clicked is mine or not
+#also changes the appearance of the button. 
+#right now just changes the appearance of the button
+    def check_btn(self,row,col):
+        active_btn = self.grid_btns[row][col]
+        active_btn.configure(
+            width=TILE_SIZE + 6,
+            height=TILE_SIZE + 6,
+            text='1',
+            compound='center',
+            relief='groove',
+            borderwidth=1,
+            font=('Terminal', 16),
+            disabledforeground='blue',
+            state='disabled'
+        )
+        
+        
+
 
 
 

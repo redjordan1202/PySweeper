@@ -1,3 +1,5 @@
+from tkinter import *
+
 #Element sizing
 TILE_SIZE = 10
 WIN_PADDING = 6
@@ -9,3 +11,5 @@ EASY_COLS = 9
 
 #colors in hex
 DARK_GREY = '#7e7e7e'
+
+#Icons
