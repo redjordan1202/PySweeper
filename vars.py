@@ -26,3 +26,5 @@ MINE = 'mine.png'
 SMILE = 'smile.png'
 DEAD = 'dead.png'
 FLAG = 'flag.png'
+
+

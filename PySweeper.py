@@ -94,17 +94,23 @@ class App:
                     image=self.img_blank,
                     relief='raised',
                     borderwidth=2,
-                    command=lambda row=y, col=x: self.check_btn(row,col),
-                    compound='top'
+                    command=lambda row=y, col=x: self.get_cords(row,col),
+                    compound='top',
+                    activebackground = DARK_GREY
                 )
+                self.button.active = 1
                 rows.append(self.button)
                 self.button.grid(column=x, 
                     row=y,
                     padx=2,
                     pady=2
                 )
-                self.button.bind("<Button-2>", lambda event=None, row=y, col=x: self.place_flag(event, row, col))
-                self.button.bind("<Button-3>", lambda event=None,row=y, col=x: self.place_flag(event, row, col))
+                self.button.bind("<Button-2>", 
+                    lambda event=None, row=y, col=x: self.place_flag(event, row, col)
+                )
+                self.button.bind("<Button-3>", 
+                    lambda event=None,row=y, col=x: self.place_flag(event, row, col)
+                )
                 self.frm_grid.columnconfigure(x,minsize=TILE_SIZE)
             self.frm_grid.rowconfigure(y,minsize=TILE_SIZE)
             self.grid_btns.append(rows)
@@ -116,14 +122,14 @@ class App:
         if selection in self.flags:
             self.grid_btns[selection[0]][selection[1]].configure(
                 image= self.img_blank,
-                state='active'
             )
+            self.grid_btns[selection[0]][selection[1]].active = 1
             self.flags.remove(selection)
         else:
             self.grid_btns[selection[0]][selection[1]].configure(
                 image= self.img_flag,
-                state='disabled'
             )
+            self.grid_btns[selection[0]][selection[1]].active = 0
             self.flags.append(selection)
 
 
@@ -136,89 +142,94 @@ class App:
             root.minsize(width=self.win_width, height=self.win_height)
             root.resizable(False,False)
 
-#function to check if button clicked is mine or not
-#also changes the appearance of the button. 
-#right now just changes the appearance of the buttons
-    def check_btn(self,row,col):
+#function to get and check cords of clicked button
+#pass cords to other functions based on if mine or not
+    def get_cords(self,row,col):
         selection = (row, col)
-        if self.click_count == 0:
-            self.place_mines(selection)
-
-        if selection in self.mines:
-            self.hit_mine(selection)
+        if self.grid_btns[selection[0]][selection[1]].active == 0:
             return
-
         else:
-            mine_count = 0
-            # COL + 1
-            check = (selection[0], selection[1] - 1)
-            if check in self.mines:
-                mine_count += 1
-            #COL - 1
-            check = (selection[0], selection[1] + 1)
-            if check in self.mines:
-                mine_count += 1
-            #ROW + 1
-            check = (selection[0] + 1, selection[1])
-            if check in self.mines:
-                mine_count += 1
-            #ROW -1
-            check = (selection[0] - 1, selection[1])
-            if check in self.mines:
-                mine_count += 1
-            #ROW + 1 COL + 1
-            check = (selection[0] + 1, selection[1] + 1)
-            if check in self.mines:
-                mine_count += 1
-            #ROW + 1 COL -1
-            check = (selection[0] + 1, selection[1] - 1)
-            if check in self.mines:
-                mine_count += 1
-            #ROW - 1 COL -1
-            check = (selection[0] - 1, selection[1] - 1)
-            if check in self.mines:
-                mine_count += 1
-            #ROW - 1 COL + 1
-            check = (selection[0] - 1, selection[1] + 1)
-            if check in self.mines:
-                mine_count += 1
-            if mine_count == 0:
-                mine_count = ""
+            if self.click_count == 0:
+                self.place_mines(selection)
 
-            color = 'black'
-            match mine_count:
-                case 1:
-                    color = BLUE
-                case 2:
-                    color = GREEN
-                case 3:
-                    color = RED
-                case 4:
-                    color = DARK_BLUE
-                case 5:
-                    color = DARK_RED
-                case 6:
-                    color = TEAL
-                case 7:
-                    color = BLACK
-                case 8:
-                    color = GREY
+            if selection in self.mines:
+                self.hit_mine(selection)
+                return
 
-            active_btn = self.grid_btns[row][col]
-            active_btn.configure(
-                width=TILE_SIZE,
-                height=TILE_SIZE,
-                text= str(mine_count),
-                compound='center',
-                relief='groove',
-                borderwidth=1,
-                font=('Terminal', 10),
-                disabledforeground=color,
-                state='disabled'
-            )
-            self.click_count += 1
-            self.cleared_space.append(selection)
+            else:
+                self.update_cell(selection)
+                self.click_count += 1
+                self.cleared_space.append(selection)
 
+#Checks for nearby mines, updates cell number.
+    def update_cell(self,selection):
+        mine_count = 0
+        # COL + 1
+        check = (selection[0], selection[1] - 1)
+        if check in self.mines:
+            mine_count += 1
+        #COL - 1
+        check = (selection[0], selection[1] + 1)
+        if check in self.mines:
+            mine_count += 1
+        #ROW + 1
+        check = (selection[0] + 1, selection[1])
+        if check in self.mines:
+            mine_count += 1
+        #ROW -1
+        check = (selection[0] - 1, selection[1])
+        if check in self.mines:
+            mine_count += 1
+        #ROW + 1 COL + 1
+        check = (selection[0] + 1, selection[1] + 1)
+        if check in self.mines:
+            mine_count += 1
+        #ROW + 1 COL -1
+        check = (selection[0] + 1, selection[1] - 1)
+        if check in self.mines:
+            mine_count += 1
+        #ROW - 1 COL -1
+        check = (selection[0] - 1, selection[1] - 1)
+        if check in self.mines:
+            mine_count += 1
+        #ROW - 1 COL + 1
+        check = (selection[0] - 1, selection[1] + 1)
+        if check in self.mines:
+            mine_count += 1
+        if mine_count == 0:
+            mine_count = ""
+
+        color = 'black'
+        match mine_count:
+            case 1:
+                color = BLUE
+            case 2:
+                color = GREEN
+            case 3:
+                color = RED
+            case 4:
+                color = DARK_BLUE
+            case 5:
+                color = DARK_RED
+            case 6:
+                color = TEAL
+            case 7:
+                color = BLACK
+            case 8:
+                color = GREY
+
+        active_btn = self.grid_btns[selection[0]][selection[1]]
+        active_btn.configure(
+            width=TILE_SIZE,
+            height=TILE_SIZE,
+            text= str(mine_count),
+            compound='center',
+            relief='groove',
+            borderwidth=1,
+            font=('Terminal', 10),
+            foreground=color,
+        )
+        active_btn.active = 0
 #Place Mines
     def place_mines(self, selection):
         safe_click = False
@@ -254,8 +265,8 @@ class App:
                 relief='groove',
                 borderwidth=1,
                 image = self.img_mine,
-                state = 'disabled',
-                bg = RED
+                bg = RED,
+                activebackground = RED
             )
         for mine in self.mines:
                 if mine == selection:
@@ -269,17 +280,23 @@ class App:
                         relief='groove',
                         borderwidth=1,
                         image = self.img_mine,
-                        state = 'disabled',
-
                     )
         for row in self.grid_btns:
                 for button in row:
-                    button.configure(state = 'disabled')
+                    #button.config(state = 'disabled')
+                    button.active = 0
                     button.unbind("<Button-2>")
                     button.unbind("<Button-3>")
         self.btn_reset.configure(image= self.img_dead)
 
 #Win once all non-mine squares are gone
+
+
+
+
+
+
+
 
 
 if __name__ == "__main__":
