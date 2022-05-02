@@ -111,20 +111,78 @@ class App:
 #right now just changes the appearance of the buttons
     def check_btn(self,row,col):
         selection = (row, col)
-        active_btn = self.grid_btns[row][col]
-        active_btn.configure(
-            width=TILE_SIZE + 6,
-            height=TILE_SIZE + 6,
-            text='1',
-            compound='center',
-            relief='groove',
-            borderwidth=1,
-            font=('Terminal', 16),
-            disabledforeground='blue',
-            state='disabled'
-        )
         if selection in self.mines:
             print("Game Over")
+
+        else:
+            mine_count = 0
+            # COL + 1
+            selection = (row, col - 1)
+            if selection in self.mines:
+                mine_count += 1
+            #COL - 1
+            selection = (row, col + 1)
+            if selection in self.mines:
+                mine_count += 1
+            #ROW + 1
+            selection = (row + 1, col)
+            if selection in self.mines:
+                mine_count += 1
+            #ROW -1
+            selection = (row - 1, col)
+            if selection in self.mines:
+                mine_count += 1
+            #ROW + 1 COL + 1
+            selection = (row + 1, col + 1)
+            if selection in self.mines:
+                mine_count += 1
+            #ROW + 1 COL -1
+            selection = (row + 1, col - 1)
+            if selection in self.mines:
+                mine_count += 1
+            #ROW - 1 COL -1
+            selection = (row - 1, col - 1)
+            if selection in self.mines:
+                mine_count += 1
+            #ROW - 1 COL + 1
+            selection = (row - 1, col + 1)
+            if selection in self.mines:
+                mine_count += 1
+            if mine_count == 0:
+                mine_count = ""
+
+            color = 'black'
+            match mine_count:
+                case 1:
+                    color = BLUE
+                case 2:
+                    color = GREEN
+                case 3:
+                    color = RED
+                case 4:
+                    color = DARK_BLUE
+                case 5:
+                    color = DARK_RED
+                case 6:
+                    color = TEAL
+                case 7:
+                    color = BLACK
+                case 8:
+                    color = GREY
+
+            active_btn = self.grid_btns[row][col]
+            active_btn.configure(
+                width=TILE_SIZE + 6,
+                height=TILE_SIZE + 6,
+                text= str(mine_count),
+                compound='center',
+                relief='groove',
+                borderwidth=1,
+                font=('Terminal', 16),
+                disabledforeground=color,
+                state='disabled'
+            )
+        
         
 #Place Mines
     def place_mines(self):
