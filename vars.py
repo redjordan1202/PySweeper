@@ -20,3 +20,5 @@ DARK_RED ='#7d0102'
 TEAL = '#027e84'
 BLACK = 'black'
 GREY = '#808080'
+
+MINE = 'mine.png'
