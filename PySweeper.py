@@ -26,6 +26,7 @@ class App:
         self.grid_btns = []
         self.mines = []
         self.flags = []
+        self.cleared_space = []
 #Count of clicks. Right now only used to prevent the player losing on their first click
         self.click_count = 0
 
@@ -110,6 +111,8 @@ class App:
 
     def place_flag(self, event, row, col):
         selection = (row, col)
+        if selection in self.cleared_space:
+            return
         if selection in self.flags:
             self.grid_btns[selection[0]][selection[1]].configure(
                 image= self.img_blank,
@@ -148,36 +151,36 @@ class App:
         else:
             mine_count = 0
             # COL + 1
-            selection = (row, col - 1)
-            if selection in self.mines:
+            check = (selection[0], selection[1] - 1)
+            if check in self.mines:
                 mine_count += 1
             #COL - 1
-            selection = (row, col + 1)
-            if selection in self.mines:
+            check = (selection[0], selection[1] + 1)
+            if check in self.mines:
                 mine_count += 1
             #ROW + 1
-            selection = (row + 1, col)
-            if selection in self.mines:
+            check = (selection[0] + 1, selection[1])
+            if check in self.mines:
                 mine_count += 1
             #ROW -1
-            selection = (row - 1, col)
-            if selection in self.mines:
+            check = (selection[0] - 1, selection[1])
+            if check in self.mines:
                 mine_count += 1
             #ROW + 1 COL + 1
-            selection = (row + 1, col + 1)
-            if selection in self.mines:
+            check = (selection[0] + 1, selection[1] + 1)
+            if check in self.mines:
                 mine_count += 1
             #ROW + 1 COL -1
-            selection = (row + 1, col - 1)
-            if selection in self.mines:
+            check = (selection[0] + 1, selection[1] - 1)
+            if check in self.mines:
                 mine_count += 1
             #ROW - 1 COL -1
-            selection = (row - 1, col - 1)
-            if selection in self.mines:
+            check = (selection[0] - 1, selection[1] - 1)
+            if check in self.mines:
                 mine_count += 1
             #ROW - 1 COL + 1
-            selection = (row - 1, col + 1)
-            if selection in self.mines:
+            check = (selection[0] - 1, selection[1] + 1)
+            if check in self.mines:
                 mine_count += 1
             if mine_count == 0:
                 mine_count = ""
@@ -214,6 +217,7 @@ class App:
                 state='disabled'
             )
             self.click_count += 1
+            self.cleared_space.append(selection)
 
 #Place Mines
     def place_mines(self, selection):
@@ -235,10 +239,7 @@ class App:
             self.mines = list(set([i for i in self.mines]))
             if len(self.mines) == EASY_MINES:
                 mines_verified = True
-                for mine in self.mines:
-                    print(mine)
             else:
-                print("Rerolling Mines")
                 row = random.randrange(0,EASY_ROWS)
                 col = random.randrange(0,EASY_COLS)
                 mine = (row, col)
@@ -274,6 +275,8 @@ class App:
         for row in self.grid_btns:
                 for button in row:
                     button.configure(state = 'disabled')
+                    button.unbind("<Button-2>")
+                    button.unbind("<Button-3>")
         self.btn_reset.configure(image= self.img_dead)
 
 #Win once all non-mine squares are gone
