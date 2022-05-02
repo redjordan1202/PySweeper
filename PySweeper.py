@@ -28,6 +28,8 @@ class App:
         self.flags = []
 #Count of clicks. Right now only used to prevent the player losing on their first click
         self.click_count = 0
+
+
 #define Status Bar widgets
         self.frm_status = Frame(master=master,
             height=STATUS_HEIGHT,
@@ -90,7 +92,7 @@ class App:
                     height=TILE_SIZE,
                     image=self.img_blank,
                     relief='raised',
-                    borderwidth=5,
+                    borderwidth=2,
                     command=lambda row=y, col=x: self.check_btn(row,col),
                     compound='top'
                 )
@@ -201,19 +203,18 @@ class App:
 
             active_btn = self.grid_btns[row][col]
             active_btn.configure(
-                width=TILE_SIZE + 6,
-                height=TILE_SIZE + 6,
+                width=TILE_SIZE,
+                height=TILE_SIZE,
                 text= str(mine_count),
                 compound='center',
                 relief='groove',
                 borderwidth=1,
-                font=('Terminal', 16),
+                font=('Terminal', 10),
                 disabledforeground=color,
                 state='disabled'
             )
             self.click_count += 1
-        
-        
+
 #Place Mines
     def place_mines(self, selection):
         safe_click = False
@@ -246,8 +247,8 @@ class App:
     def hit_mine(self,selection):
         hit_mine = self.grid_btns[selection[0]][selection[1]]
         hit_mine.configure(
-                width=TILE_SIZE + 6,
-                height=TILE_SIZE + 6,
+                width=TILE_SIZE,
+                height=TILE_SIZE,
                 compound='center',
                 relief='groove',
                 borderwidth=1,
@@ -261,8 +262,8 @@ class App:
                 else:
                     active_btn = self.grid_btns[mine[0]][mine[1]]
                     active_btn.configure(
-                        width=TILE_SIZE + 6,
-                        height=TILE_SIZE + 6,
+                        width=TILE_SIZE,
+                        height=TILE_SIZE,
                         compound='center',
                         relief='groove',
                         borderwidth=1,
@@ -274,19 +275,6 @@ class App:
                 for button in row:
                     button.configure(state = 'disabled')
         self.btn_reset.configure(image= self.img_dead)
-
-
-
-
-
-
-
-
-#Gameover if Mine clicked on
-
-#Display number on clicked Squares
-
-#Place Flag and protect square
 
 #Win once all non-mine squares are gone
 

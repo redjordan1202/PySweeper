@@ -1,7 +1,7 @@
 from tkinter import *
 
 #Element sizing
-TILE_SIZE = 10
+TILE_SIZE = 15
 WIN_PADDING = 6
 STATUS_HEIGHT = 65
 
