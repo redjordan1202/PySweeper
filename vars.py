@@ -8,8 +8,7 @@ STATUS_HEIGHT = 60
 #Difficulty Levels
 EASY_ROWS = 9
 EASY_COLS = 9
+EASY_MINES = 10
 
 #colors in hex
 DARK_GREY = '#7e7e7e'
-
-#Icons

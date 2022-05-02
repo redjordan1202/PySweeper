@@ -1,6 +1,7 @@
 #PySweeper -  tkinter based Minesweeper Clone
 from tkinter import *
 from vars import *
+import random
 
 
 #Set up window and class for app
@@ -16,6 +17,8 @@ class App:
         self.blank_img = PhotoImage()
 #list of grid buttons
         self.grid_btns = []
+# Mines
+        self.mines = []
 
 #define Status Bar widgets
         self.frm_status = Frame(master=master,
@@ -57,16 +60,17 @@ class App:
         self.frm_status.grid_columnconfigure(2, weight=1)
         self.frm_status.grid_rowconfigure(0, weight=1)
         self.frm_status.grid_rowconfigure(2, weight=1)
-        self.ent_mine_count.grid(column=0, row=1, padx=5, pady=4)
+        self.ent_mine_count.grid(column=0, row=1, padx=5, pady=4,sticky=W)
         self.btn_reset.grid(column=1, row=1, pady=4)
-        self.ent_score.grid(column=2, row=1, padx=5, pady=4)
+        self.ent_score.grid(column=2, row=1, padx=5, pady=4,sticky=E)
 
 # Grid Section Drawing
         self.frm_grid.pack()
         self.frm_grid.pack_propagate(0)        
         self.draw_grid()
+#Place mines on the grid
+        self.place_mines()
         
-
 #Draw grid of buttons
     def draw_grid(self):
         #Using easy sized 9x9 grid for now
@@ -93,8 +97,6 @@ class App:
             self.frm_grid.rowconfigure(y,minsize=TILE_SIZE)
             self.grid_btns.append(rows)
 
-
-
 #Dynamic Window Size based on difficulty
     def set_win_size(self, difficulty):
         #Custom = 0, Easy = 1, Intermediate = 2, Expert = 3
@@ -106,8 +108,9 @@ class App:
 
 #function to check if button clicked is mine or not
 #also changes the appearance of the button. 
-#right now just changes the appearance of the button
+#right now just changes the appearance of the buttons
     def check_btn(self,row,col):
+        selection = (row, col)
         active_btn = self.grid_btns[row][col]
         active_btn.configure(
             width=TILE_SIZE + 6,
@@ -120,14 +123,45 @@ class App:
             disabledforeground='blue',
             state='disabled'
         )
+        if selection in self.mines:
+            print("Game Over")
         
-        
-
-
-
-
-
 #Place Mines
+    def place_mines(self):
+        for x in range(EASY_MINES):
+            row = random.randrange(0,EASY_ROWS)
+            col = random.randrange(0,EASY_COLS)
+            mine = (row, col)
+            self.mines.append(mine)
+        
+        mines_verified = False
+        while mines_verified != True:
+            self.mines = list(set([i for i in self.mines]))
+            if len(self.mines) == EASY_MINES:
+                mines_verified = True
+                for mine in self.mines:
+                    print(mine)
+            else:
+                print("Rerolling Mines")
+                row = random.randrange(0,EASY_ROWS)
+                col = random.randrange(0,EASY_COLS)
+                mine = (row, col)
+                self.mines.append(mine)
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #Gameover if Mine clicked on
 
