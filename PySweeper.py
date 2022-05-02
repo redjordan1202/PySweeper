@@ -1,4 +1,5 @@
 #PySweeper -  tkinter based Minesweeper Clone
+from cgitb import text
 from tkinter import *
 from vars import *
 import random
@@ -13,17 +14,18 @@ class App:
 
 #Set window to Easy size. Which is default
         self.set_win_size(1)
-#blank image to allow pixel sizing on buttons
-        self.blank_img = PhotoImage()
-#mine image
+
+#images
+        self.img_blank = PhotoImage()
         self.img_mine = PhotoImage(file = MINE)
-#smile image
         self.img_smile = PhotoImage(file=SMILE)
         self.img_dead = PhotoImage(file=DEAD)
-#list of grid buttons
+        self.img_flag = PhotoImage(file=FLAG)
+
+#cord lists
         self.grid_btns = []
-# Mines
         self.mines = []
+        self.flags = []
 #Count of clicks. Right now only used to prevent the player losing on their first click
         self.click_count = 0
 #define Status Bar widgets
@@ -86,7 +88,7 @@ class App:
                     bg=DARK_GREY,
                     width=TILE_SIZE,
                     height=TILE_SIZE,
-                    image=self.blank_img,
+                    image=self.img_blank,
                     relief='raised',
                     borderwidth=5,
                     command=lambda row=y, col=x: self.check_btn(row,col),
@@ -98,9 +100,27 @@ class App:
                     padx=2,
                     pady=2
                 )
+                self.button.bind("<Button-2>", lambda event=None, row=y, col=x: self.place_flag(event, row, col))
+                self.button.bind("<Button-3>", lambda event=None,row=y, col=x: self.place_flag(event, row, col))
                 self.frm_grid.columnconfigure(x,minsize=TILE_SIZE)
             self.frm_grid.rowconfigure(y,minsize=TILE_SIZE)
             self.grid_btns.append(rows)
+
+    def place_flag(self, event, row, col):
+        selection = (row, col)
+        if selection in self.flags:
+            self.grid_btns[selection[0]][selection[1]].configure(
+                image= self.img_blank,
+                state='active'
+            )
+            self.flags.remove(selection)
+        else:
+            self.grid_btns[selection[0]][selection[1]].configure(
+                image= self.img_flag,
+                state='disabled'
+            )
+            self.flags.append(selection)
+
 
 #Dynamic Window Size based on difficulty
     def set_win_size(self, difficulty):
