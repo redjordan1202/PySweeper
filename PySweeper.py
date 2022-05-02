@@ -15,11 +15,14 @@ class App:
         self.set_win_size(1)
 #blank image to allow pixel sizing on buttons
         self.blank_img = PhotoImage()
+#mine image
+        self.img_mine = PhotoImage(file = MINE)
 #list of grid buttons
         self.grid_btns = []
 # Mines
         self.mines = []
-
+#Count of clicks. Right now only used to prevent the player losing on their first click
+        self.click_count = 0
 #define Status Bar widgets
         self.frm_status = Frame(master=master,
             height=STATUS_HEIGHT,
@@ -68,8 +71,7 @@ class App:
         self.frm_grid.pack()
         self.frm_grid.pack_propagate(0)        
         self.draw_grid()
-#Place mines on the grid
-        self.place_mines()
+
         
 #Draw grid of buttons
     def draw_grid(self):
@@ -111,8 +113,12 @@ class App:
 #right now just changes the appearance of the buttons
     def check_btn(self,row,col):
         selection = (row, col)
+        if self.click_count == 0:
+            self.place_mines(selection)
+
         if selection in self.mines:
-            print("Game Over")
+            self.hit_mine(selection)
+            return
 
         else:
             mine_count = 0
@@ -182,16 +188,24 @@ class App:
                 disabledforeground=color,
                 state='disabled'
             )
+            self.click_count += 1
         
         
 #Place Mines
-    def place_mines(self):
-        for x in range(EASY_MINES):
-            row = random.randrange(0,EASY_ROWS)
-            col = random.randrange(0,EASY_COLS)
-            mine = (row, col)
-            self.mines.append(mine)
-        
+    def place_mines(self, selection):
+        safe_click = False
+        while safe_click == False:
+            for x in range(EASY_MINES):
+                row = random.randrange(0,EASY_ROWS)
+                col = random.randrange(0,EASY_COLS)
+                mine = (row, col)
+                self.mines.append(mine)
+            if selection in self.mines:
+                continue
+            else:
+                safe_click = True
+                break
+
         mines_verified = False
         while mines_verified != True:
             self.mines = list(set([i for i in self.mines]))
@@ -206,7 +220,37 @@ class App:
                 mine = (row, col)
                 self.mines.append(mine)
 
-            
+    def hit_mine(self,selection):
+        hit_mine = self.grid_btns[selection[0]][selection[1]]
+        hit_mine.configure(
+                width=TILE_SIZE + 6,
+                height=TILE_SIZE + 6,
+                compound='center',
+                relief='groove',
+                borderwidth=1,
+                image = self.img_mine,
+                state = 'disabled',
+                bg = RED
+            )
+        for mine in self.mines:
+                if mine == selection:
+                    continue
+                else:
+                    active_btn = self.grid_btns[mine[0]][mine[1]]
+                    active_btn.configure(
+                        width=TILE_SIZE + 6,
+                        height=TILE_SIZE + 6,
+                        compound='center',
+                        relief='groove',
+                        borderwidth=1,
+                        image = self.img_mine,
+                        state = 'disabled',
+
+                    )
+        for row in self.grid_btns:
+                for button in row:
+                    button.configure(state = 'disabled')
+
 
 
 
