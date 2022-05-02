@@ -3,7 +3,7 @@ from tkinter import *
 #Element sizing
 TILE_SIZE = 10
 WIN_PADDING = 6
-STATUS_HEIGHT = 60
+STATUS_HEIGHT = 65
 
 #Difficulty Levels
 EASY_ROWS = 9
@@ -21,4 +21,7 @@ TEAL = '#027e84'
 BLACK = 'black'
 GREY = '#808080'
 
+#Image Files
 MINE = 'mine.png'
+SMILE = 'smile.png'
+DEAD = 'dead.png'

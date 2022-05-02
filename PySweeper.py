@@ -17,6 +17,9 @@ class App:
         self.blank_img = PhotoImage()
 #mine image
         self.img_mine = PhotoImage(file = MINE)
+#smile image
+        self.img_smile = PhotoImage(file=SMILE)
+        self.img_dead = PhotoImage(file=DEAD)
 #list of grid buttons
         self.grid_btns = []
 # Mines
@@ -32,10 +35,10 @@ class App:
             borderwidth=8
         )
         self.btn_reset = Button(master=self.frm_status,
-            image=self.blank_img,
-            width=25,
-            height=25,
-            bg='yellow',
+            image=self.img_smile,
+            width=40,
+            height=40,
+            bg=DARK_GREY,
         )
         self.ent_mine_count = Entry(master=self.frm_status,
             state='disabled',
@@ -250,13 +253,7 @@ class App:
         for row in self.grid_btns:
                 for button in row:
                     button.configure(state = 'disabled')
-
-
-
-
-
-
-
+        self.btn_reset.configure(image= self.img_dead)
 
 
 
