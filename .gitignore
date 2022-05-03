@@ -127,3 +127,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+#vscode folder
+/.vscode
+
+#Working img files
+*.svg
+*.xcf
