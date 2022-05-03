@@ -131,13 +131,12 @@ class App:
         self.ent_mine_count.grid(column=0, row=1, padx=5, pady=4,sticky=W)
         self.btn_reset.grid(column=1, row=1, pady=4)
         self.ent_score.grid(column=2, row=1, padx=5, pady=4,sticky=E)
-        
+
 # Grid Section Drawing
         self.frm_grid.pack()
         self.frm_grid.pack_propagate(0)        
         self.draw_grid()
 
-        
 #Draw grid of buttons
     def draw_grid(self):
         #Using easy sized 9x9 grid for now
@@ -193,7 +192,6 @@ class App:
             self.grid_btns[selection[0]][selection[1]].active = 0
             self.flags.append(selection)
 
-
 #Dynamic Window Size based on difficulty
     def set_win_size(self, difficulty):
         #Custom = 0, Easy = 1, Intermediate = 2, Expert = 3
@@ -207,7 +205,8 @@ class App:
 #pass cords to other functions based on if mine or not
     def get_cords(self,row,col):
         selection = (row, col)
-        if self.grid_btns[selection[0]][selection[1]].active == 0:
+        clicked = self.grid_btns[selection[0]][selection[1]]
+        if clicked.active == 0:
             return
         else:
             if self.click_count == 0:
@@ -217,15 +216,12 @@ class App:
                 self.hit_mine(selection)
                 return
 
-            self.update_cell(selection)
+            clicked.update_cell()
+            clicked.active = 0
             self.click_count += 1
-            self.cleared_space.append(selection)
 
 #Checks for nearby mines, updates cell number.
-    def update_cell(self,selection):
-        active_btn = self.grid_btns[selection[0]][selection[1]]
-        active_btn.update_cell()
-        active_btn.active = 0
+    
 
 #Place Mines
     def place_mines(self, selection):
