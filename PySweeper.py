@@ -1,8 +1,69 @@
 #PySweeper -  tkinter based Minesweeper Clone
-from cgitb import text
 from tkinter import *
 from vars import *
 import random
+
+class GridButton(Button):
+    def __init__(self, master, row, col, mine_count, *args, **kwargs):
+        Button.__init__(self, master, *args, **kwargs)
+        self.row = row
+        self.col = col
+        self.mine_count = mine_count
+
+        self.adjacent_cells = []
+        self.adjacent_cells.append((self.row+1, self.col))
+        self.adjacent_cells.append((self.row, self.col+1))
+        self.adjacent_cells.append((self.row-1, self.col))
+        self.adjacent_cells.append((self.row, self.col-1))
+        self.adjacent_cells.append((self.row+1, self.col+1))
+        self.adjacent_cells.append((self.row-1, self.col-1))
+        self.adjacent_cells.append((self.row+1, self.col-1))
+        self.adjacent_cells.append((self.row-1, self.col+1))
+
+    def get_mine_count(self):
+        for cell in self.adjacent_cells:
+            if cell in mainApp.mines:
+                self.mine_count += 1
+
+    def update_cell(self):
+        if self.mine_count == 0:
+            text = ""
+        else:
+            text = str(self.mine_count)
+        self.configure(
+            width=TILE_SIZE,
+            height=TILE_SIZE,
+            text= text,
+            compound='center',
+            relief='groove',
+            borderwidth=1,
+            font=('Terminal', 10),
+            foreground=self.get_color(),
+        )
+    
+    def get_color(self):
+        color = 'black'
+        match self.mine_count:
+            case 1:
+                color = BLUE
+            case 2:
+                color = GREEN
+            case 3:
+                color = RED
+            case 4:
+                color = DARK_BLUE
+            case 5:
+                color = DARK_RED
+            case 6:
+                color = TEAL
+            case 7:
+                color = BLACK
+            case 8:
+                color = GREY
+        return color
+
+
+
 
 
 #Set up window and class for app
@@ -14,22 +75,19 @@ class App:
 
 #Set window to Easy size. Which is default
         self.set_win_size(1)
-
 #images
         self.img_blank = PhotoImage()
         self.img_mine = PhotoImage(file = MINE)
         self.img_smile = PhotoImage(file=SMILE)
         self.img_dead = PhotoImage(file=DEAD)
         self.img_flag = PhotoImage(file=FLAG)
-
 #cord lists
         self.grid_btns = []
         self.mines = []
         self.flags = []
         self.cleared_space = []
-#Count of clicks. Right now only used to prevent the player losing on their first click
-        self.click_count = 0
 
+        self.click_count = 0
 
 #define Status Bar widgets
         self.frm_status = Frame(master=master,
@@ -63,7 +121,6 @@ class App:
             borderwidth=8,
         )
 
-
 #Status Bar Drawing
         self.frm_status.pack(pady=10)
         self.frm_status.grid_propagate(0)
@@ -74,7 +131,7 @@ class App:
         self.ent_mine_count.grid(column=0, row=1, padx=5, pady=4,sticky=W)
         self.btn_reset.grid(column=1, row=1, pady=4)
         self.ent_score.grid(column=2, row=1, padx=5, pady=4,sticky=E)
-
+        
 # Grid Section Drawing
         self.frm_grid.pack()
         self.frm_grid.pack_propagate(0)        
@@ -87,7 +144,7 @@ class App:
         for y in range(0, EASY_ROWS, 1):
             rows = []
             for x in range(0, EASY_COLS, 1):
-                self.button = Button(master=self.frm_grid, 
+                self.button = GridButton(master=self.frm_grid, 
                     bg=DARK_GREY,
                     width=TILE_SIZE,
                     height=TILE_SIZE,
@@ -96,9 +153,13 @@ class App:
                     borderwidth=2,
                     command=lambda row=y, col=x: self.get_cords(row,col),
                     compound='top',
-                    activebackground = DARK_GREY
+                    activebackground = DARK_GREY,
+                    row = y,
+                    col = x,
+                    mine_count = 0,
                 )
                 self.button.active = 1
+
                 rows.append(self.button)
                 self.button.grid(column=x, 
                     row=y,
@@ -151,85 +212,21 @@ class App:
         else:
             if self.click_count == 0:
                 self.place_mines(selection)
-
+                
             if selection in self.mines:
                 self.hit_mine(selection)
                 return
 
-            else:
-                self.update_cell(selection)
-                self.click_count += 1
-                self.cleared_space.append(selection)
+            self.update_cell(selection)
+            self.click_count += 1
+            self.cleared_space.append(selection)
 
 #Checks for nearby mines, updates cell number.
     def update_cell(self,selection):
-        mine_count = 0
-        # COL + 1
-        check = (selection[0], selection[1] - 1)
-        if check in self.mines:
-            mine_count += 1
-        #COL - 1
-        check = (selection[0], selection[1] + 1)
-        if check in self.mines:
-            mine_count += 1
-        #ROW + 1
-        check = (selection[0] + 1, selection[1])
-        if check in self.mines:
-            mine_count += 1
-        #ROW -1
-        check = (selection[0] - 1, selection[1])
-        if check in self.mines:
-            mine_count += 1
-        #ROW + 1 COL + 1
-        check = (selection[0] + 1, selection[1] + 1)
-        if check in self.mines:
-            mine_count += 1
-        #ROW + 1 COL -1
-        check = (selection[0] + 1, selection[1] - 1)
-        if check in self.mines:
-            mine_count += 1
-        #ROW - 1 COL -1
-        check = (selection[0] - 1, selection[1] - 1)
-        if check in self.mines:
-            mine_count += 1
-        #ROW - 1 COL + 1
-        check = (selection[0] - 1, selection[1] + 1)
-        if check in self.mines:
-            mine_count += 1
-        if mine_count == 0:
-            mine_count = ""
-
-        color = 'black'
-        match mine_count:
-            case 1:
-                color = BLUE
-            case 2:
-                color = GREEN
-            case 3:
-                color = RED
-            case 4:
-                color = DARK_BLUE
-            case 5:
-                color = DARK_RED
-            case 6:
-                color = TEAL
-            case 7:
-                color = BLACK
-            case 8:
-                color = GREY
-
         active_btn = self.grid_btns[selection[0]][selection[1]]
-        active_btn.configure(
-            width=TILE_SIZE,
-            height=TILE_SIZE,
-            text= str(mine_count),
-            compound='center',
-            relief='groove',
-            borderwidth=1,
-            font=('Terminal', 10),
-            foreground=color,
-        )
+        active_btn.update_cell()
         active_btn.active = 0
+
 #Place Mines
     def place_mines(self, selection):
         safe_click = False
@@ -255,6 +252,10 @@ class App:
                 col = random.randrange(0,EASY_COLS)
                 mine = (row, col)
                 self.mines.append(mine)
+        for row in self.grid_btns:
+            for button in row:
+                button.get_mine_count()
+                print(button.mine_count)
 
     def hit_mine(self,selection):
         hit_mine = self.grid_btns[selection[0]][selection[1]]
