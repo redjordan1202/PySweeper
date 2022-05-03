@@ -90,32 +90,37 @@ class App:
         self.click_count = 0
 
 #define Status Bar widgets
-        self.frm_status = Frame(master=master,
+        self.frm_status = Frame(
+            master=master,
             height=STATUS_HEIGHT,
             width=(self.win_width-WIN_PADDING) * 2.5,
             bg=DARK_GREY,
             relief='sunken',
             borderwidth=8
         )
-        self.btn_reset = Button(master=self.frm_status,
+        self.btn_reset = Button(
+            master=self.frm_status,
             image=self.img_smile,
             width=40,
             height=40,
             bg=DARK_GREY,
         )
-        self.ent_mine_count = Entry(master=self.frm_status,
+        self.ent_mine_count = Entry(
+            master=self.frm_status,
             state='disabled',
             font=('Arial', 24),
             disabledbackground='black'
         )
-        self.ent_score = Entry(master=self.frm_status,
+        self.ent_score = Entry(
+            master=self.frm_status,
             state='disabled',
             font=('Arial', 24),
             disabledbackground='black'
         )
 
 #Grid Frame
-        self.frm_grid = Frame(master=master, 
+        self.frm_grid = Frame(
+            master=master, 
             bg=DARK_GREY,
             relief='sunken',
             borderwidth=8,
@@ -143,7 +148,8 @@ class App:
         for y in range(0, EASY_ROWS, 1):
             rows = []
             for x in range(0, EASY_COLS, 1):
-                self.button = GridButton(master=self.frm_grid, 
+                self.button = GridButton(
+                    master=self.frm_grid, 
                     bg=DARK_GREY,
                     width=TILE_SIZE,
                     height=TILE_SIZE,
@@ -160,15 +166,18 @@ class App:
                 self.button.active = 1
 
                 rows.append(self.button)
-                self.button.grid(column=x, 
+                self.button.grid(
+                    column=x, 
                     row=y,
                     padx=2,
                     pady=2
                 )
-                self.button.bind("<Button-2>", 
+                self.button.bind(
+                    "<Button-2>", 
                     lambda event=None, row=y, col=x: self.place_flag(event, row, col)
                 )
-                self.button.bind("<Button-3>", 
+                self.button.bind(
+                    "<Button-3>", 
                     lambda event=None,row=y, col=x: self.place_flag(event, row, col)
                 )
                 self.frm_grid.columnconfigure(x,minsize=TILE_SIZE)
@@ -251,7 +260,6 @@ class App:
         for row in self.grid_btns:
             for button in row:
                 button.get_mine_count()
-                print(button.mine_count)
 
     def hit_mine(self,selection):
         hit_mine = self.grid_btns[selection[0]][selection[1]]
